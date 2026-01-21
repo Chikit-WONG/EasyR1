@@ -18,6 +18,7 @@ The main entry point to run the PPO algorithm
 from typing import Literal, Optional, Union, cast
 
 import numpy as np
+import os
 import psutil
 import torch
 import torch.distributed as dist

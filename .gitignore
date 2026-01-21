@@ -182,3 +182,11 @@ tensorboard_log/
 # data
 images/
 images*
+
+# wheel files
+*.whl
+
+# temporary files
+temp/
+
+easyr1.tar.gz

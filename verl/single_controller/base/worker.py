@@ -134,6 +134,19 @@ class Worker(WorkerHelper):
             os.environ["LOCAL_RANK"] = os.getenv("RAY_LOCAL_RANK")
             cuda_visible_devices = os.getenv("LOCAL_RANK", "0")
             torch.cuda.set_device(int(cuda_visible_devices))
+        else:
+            # For NVIDIA GPUs with Ray: set device based on local rank
+            # This ensures each process uses its designated GPU
+            local_rank_str = os.getenv("RAY_LOCAL_RANK", os.getenv("LOCAL_RANK", "0"))
+            try:
+                local_rank_int = int(local_rank_str)
+                device_count = torch.cuda.device_count()
+                if local_rank_int < device_count:
+                    torch.cuda.set_device(local_rank_int)
+                    os.environ["CUDA_DEVICE"] = str(local_rank_int)
+            except (ValueError, RuntimeError):
+                # Fallback: use device 0 if parsing fails
+                pass
 
         master_addr = os.getenv("MASTER_ADDR")
         master_port = os.getenv("MASTER_PORT")

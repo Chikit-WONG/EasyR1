@@ -42,16 +42,19 @@ def get_tokenizer(model_path: str, override_chat_template: Optional[str] = None,
 
 def get_processor(model_path: str, override_chat_template: Optional[str] = None, **kwargs) -> Optional[ProcessorMixin]:
     """Create a huggingface pretrained processor."""
-    processor = AutoProcessor.from_pretrained(model_path, **kwargs)
-    if override_chat_template is not None:
-        with open(override_chat_template) as f:
-            processor.chat_template = f.read()
+    try:
+        processor = AutoProcessor.from_pretrained(model_path, **kwargs)
+        if override_chat_template is not None:
+            with open(override_chat_template) as f:
+                processor.chat_template = f.read()
 
-        print(f"New chat template: {processor.chat_template}")
+            print(f"New chat template: {processor.chat_template}")
 
-    # Avoid load tokenizer, see:
-    # https://github.com/huggingface/transformers/blob/v4.52.4/src/transformers/models/auto/processing_auto.py#L386
-    if processor is not None and "Processor" not in processor.__class__.__name__:
-        processor = None
-
-    return processor
+        # Avoid load tokenizer, see:
+        # https://github.com/huggingface/transformers/blob/v4.52.4/src/transformers/models/auto/processing_auto.py#L386
+        # Note: Be lenient with processor class name check - some models may have non-standard names
+        # Removed strict "Processor" in class name check to support more models
+        return processor
+    except Exception as e:
+        print(f"Warning: Failed to load processor from {model_path}: {e}")
+        return None

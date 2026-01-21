@@ -112,7 +112,8 @@ def main():
                 "VLLM_ALLREDUCE_USE_SYMM_MEM": "0",
             }
         }
-        ray.init(runtime_env=runtime_env)
+        # ray.init(runtime_env=runtime_env)
+        ray.init(address='local', runtime_env=runtime_env)
 
     runner = Runner.remote()
     ray.get(runner.run.remote(ppo_config))

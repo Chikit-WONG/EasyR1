@@ -2,7 +2,8 @@
 
 set -x
 
-MODEL_PATH=Qwen/Qwen3-VL-4B-Instruct  # replace it with your local file path
+# MODEL_PATH=Qwen/Qwen3-VL-4B-Instruct  # replace it with your local file path
+MODEL_PATH=/hpc2hdd/home/ckwong627/workdir/models/Qwen3-VL-4B-Instruct
 
 python3 -m verl.trainer.main \
     config=examples/config.yaml \
